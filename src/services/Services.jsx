@@ -1,19 +1,23 @@
-import { createClient } from "contentful";
-const space = import.meta.env.VITE_SPACE;
-const accessToken = import.meta.env.VITE_ACCESS_TOKEN;
+const baseUrl = import.meta.env.VITE_BASE_URL;
 
-const client = createClient({
-  space: space,
-  accessToken: accessToken,
-});
+export const createService = () => {
+  const petition = async (method, endpoint, body) => {
+    const options = {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      mode: "cors",
+    };
+    return await fetch(baseUrl + endpoint, options);
+  };
 
-export const getFood = async () => {
-  return await client.getEntries({
-    content_type: "comida",
-  });
-};
-export const getDrinks = async () => {
-  return await client.getEntries({
-    content_type: "bebida",
-  });
+  const getFood = async () => petition("GET", "/food");
+  const getDrinks = async () => petition("GET", "/drinks");
+
+  return {
+    getFood,
+    getDrinks,
+  };
 };

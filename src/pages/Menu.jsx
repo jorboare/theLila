@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
-import { getFood, getDrinks } from "../services/Services";
-import {
-  foodFormatter,
-  allergiesFormatter,
-  drinkFormatter,
-} from "../utils/res-formatter";
+import { createService } from "../services/Services";
+import { allergiesFormatter } from "../utils/res-formatter";
 import Eng from "../assets/flags/united-kingdom.png";
 import Esp from "../assets/flags/spain.png";
 import { CircularProgress } from "@mui/material";
@@ -36,21 +32,24 @@ const allergiesEng = [
   "Soy",
 ];
 const Menu = () => {
+  const service = createService();
   const [food, setFood] = useState();
   const [drinks, setDrinks] = useState();
   const [language, setLanguage] = useState("ESP");
 
   useEffect(() => {
     const foodRequest = async () => {
-      const res = await getFood();
-      const formattedRes = foodFormatter(res);
-      setFood(formattedRes);
+      console.log("Req food");
+      const res = await service.getFood();
+      const data = await res.json();
+      if (data) setFood(data.food);
     };
     foodRequest();
     const drinkRequest = async () => {
-      const res = await getDrinks();
-      const formattedRes = drinkFormatter(res);
-      setDrinks(formattedRes);
+      const res = await service.getDrinks();
+      const data = await res.json();
+
+      if (data) setDrinks(data.drinks);
     };
     drinkRequest();
   }, []);
